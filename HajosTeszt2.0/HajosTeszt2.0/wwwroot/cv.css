@@ -1,0 +1,46 @@
+﻿div {
+    margin: 10px;
+    padding: 20px;
+    border: 3px solid fuchsia;
+    border-radius: 25px;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+a {
+    background-color: blue;
+    color: white;
+    border-radius: 25px;
+    padding: 1px;
+}
+
+    a:hover {
+        background-color: fuchsia;
+    }
+
+span {
+    font-weight: bold;
+    font-style: italic;
+    color: fuchsia;
+    font-size: 30px
+}
+
+#lista {
+    background-color: lightgrey;
+}
+
+.megisfeher {
+    background-color: white;
+    border-radius: 20px;
+    width: 250px;
+}
+
+.sorrend {
+    font-style: italic;
+}
+img{
+    display:block;
+    margin: auto;
+}
