@@ -1,0 +1,20 @@
+﻿body {
+}
+div {
+    display: flex;
+}
+#eredmenyDiv {
+    display: flex;   
+    background-color: aqua;
+    flex-direction:column;
+}
+.sor {
+    background-color: burlywood;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.elem {
+    display: flex;  
+    padding: 6px;
+}
