@@ -21,7 +21,8 @@ div {
 #kérdés_szöveg {
     border: 2px groove black;
     border-radius: 12px;
-    background-color: burlywood;
+    background-color:  burlywood;
+    
 }
 
 #középső {
@@ -34,6 +35,7 @@ div {
     flex-grow: 1;
     flex-shrink: 1;
     border: 2px groove black;
+    background-color: burlywood;
 }
 
 #vezérlő {
@@ -71,13 +73,6 @@ div {
     color: white;
 }
 
-.jó{
-    background-color: green;
-}
-
-.rossz{
-    background-color: red;
-}
 [id*="col-"] {
     width: 100%;
 }
