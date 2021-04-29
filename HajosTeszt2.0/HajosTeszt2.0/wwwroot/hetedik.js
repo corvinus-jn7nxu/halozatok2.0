@@ -1,41 +1,39 @@
 ﻿window.onload = function () {
-    //fetch('/questions.json')
-    //    .then(response => response.json())
-    //    .then(data => letöltésBefejeződött(data))
+    init()
     let válasz1 = document.getElementById("válasz1")
     let válasz2 = document.getElementById("válasz2")
     let válasz3 = document.getElementById("válasz3")
-    document.getElementById("előre").onclick = előre_katt;
-    document.getElementById("vissza").onclick = vissza_katt;
-    document.getElementById("válasz1").onclick = szinez;
-    document.getElementById("válasz2").onclick = szinez;
-    document.getElementById("válasz3").onclick = szinez;
-    
 
-    fetch('/questions/' + aktiv_kérdés)
-        .then(response => {
+    //fetch('/questions/' + aktiv_kérdés)
+    //    .then(response => {
 
-            if(!response.ok) return
+    //        if (!response.ok) return
 
-            return response.json()
-            
-            
-        })
-        .then(data => kérdésMegjelenítés(data)
-        );
+    //        return response.json()
+
+
+    //    })
+    //    .then(data => kérdésMegjelenítés(data)
+    //    );
 }
 
 var kérdések
 var aktiv_kérdés = 1
 var helyes_válasz
+var hotList = [];           //Az éppen gyakoroltatott kérdések listája 
+var questionsInHotList = 3; //Ez majd 7 lesz, teszteléshez jobb a 3. 
+var displayedQuestion;      //A hotList-ből éppen ez a kérdés van kint
+var numberOfQuestions;      //Kérdések száma a teljes adatbázisban
+var nextQuestion = 1;       //A következő kérdés száma a teljes listában
 
-function kérdésMegjelenítés(kérdés) {
+function kérdésMegjelenítés() {
+    let kérdés = hotList[displayedQuestion].question;
     console.log(kérdés);
     document.getElementById("kérdés_szöveg").innerText = kérdés.questionText
     document.getElementById("válasz1").innerText = kérdés.answer1
     document.getElementById("válasz2").innerText = kérdés.answer2
     document.getElementById("válasz3").innerText = kérdés.answer3
-    if (kérdés.image == "") {    }
+    if (kérdés.image == "") { }
     else {
         document.getElementById("kép1").src = "https://szoft1.comeback.hu/hajo/" + kérdés.image;
     }
@@ -43,19 +41,46 @@ function kérdésMegjelenítés(kérdés) {
 }
 
 
-function kérdésBetöltés(id) {
-    fetch(`/questions/${id}`)
-        .then(response => {
-            if (!response.ok) {
-                console.error(`Hibás válasz: ${response.status}`)
+function kérdésBetöltés(questionNumber, destination) {
+    fetch(`/questions/${questionNumber}`)
+        .then(
+            result => {
+                if (!result.ok) {
+                    console.error(`Hibás letöltés: ${response.status}`)
+                }
+                else {
+                    return result.json()
+                }
             }
-            else {
-                return response.json()
+        )
+        .then(
+            q => {
+                hotList[destination].question = q;
+                hotList[destination].goodAnswers = 0;
+                console.log(`A ${questionNumber}. kérdés letöltve a hot list ${destination}. helyére`)
+                if (displayedQuestion == undefined && destination == 0) { //!!!!!!!!!!!!!
+                    displayedQuestion = 0;
+                    kérdésMegjelenítés();
+                }
             }
-        })
-        .then(data => kérdésMegjelenítés(data));
-    
-}    
+        );
+}
+
+function init() {
+    for (var i = 0; i < questionsInHotList; i++) {
+        let q = {
+            question: {},
+            goodAnswers: 0
+        }
+        hotList[i] = q;
+    }
+
+    //Első kérdések letöltése
+    for (var i = 0; i < questionsInHotList; i++) {
+        kérdésBetöltés(nextQuestion, i);
+        nextQuestion++;
+    }
+}
 
 
 function letöltésBefejeződött(d) {
@@ -66,24 +91,23 @@ function letöltésBefejeződött(d) {
 
 }
 
-/*function kérdésMegjelenítés(kérdés) {
+function előre() {
+    vissza_szinez()
+    if (hotList[displayedQuestion].goodAnswers == 3) {
+        displayedQuestion++;
+        if (displayedQuestion == hotList.Count) {
+            return;
+        }
+        //if (displayedQuestion == questionsInHotList) displayedQuestion = 0;
+        else {
+            kérdésMegjelenítés()
+        }
 
-    let ide_kérdes = document.getElementById("kérdés_szöveg");
-    ide_kérdes.innerHTML = kérdések[kérdés].questionText
-    //let válasz1 = document.getElementById("válasz1")
-    válasz1.innerHTML = kérdések[kérdés].answer1
-    //let válasz2 = document.getElementById("válasz2")
-    válasz2.innerHTML = kérdések[kérdés].answer2
-    //let válasz3 = document.getElementById("válasz3")
-    válasz3.innerHTML = kérdések[kérdés].answer3
-    let kép = document.getElementById("kép1")
-    kép.src = `https://szoft1.comeback.hu/hajo/${kérdések[kérdés].image}`
-    helyes_válasz = kérdések[kérdés].correctAnswer
-    válasz1.style.backgroundColor = "brown"
-    válasz2.style.backgroundColor = "brown"
-    válasz3.style.backgroundColor = "brown"
+    }
 
-}*/
+
+
+}
 
 function előre_katt() {
     vissza_szinez()
@@ -117,12 +141,12 @@ function vissza_szinez() {
     válasz3.style.backgroundColor = "burlywood"
 }
 
-function szinez() {
+function szinez(megoldas) {
     //let válasz1 = document.getElementById("válasz1")
     //let válasz2 = document.getElementById("válasz2")
     //let válasz3 = document.getElementById("válasz3")
 
-    
+
     if (helyes_válasz == "1") {
         console.log("első a jó")
         válasz1.style.backgroundColor = "green"
@@ -143,7 +167,17 @@ function szinez() {
             válasz3.style.backgroundColor = "green"
         }
     }
+    if (megoldas == helyes_válasz) {
+        hotList[displayedQuestion].goodAnswers++;
+    }
 
 }
-
+//var timeoutHandler;
+//timeoutHandler = setTimeout(előre, 3000);
+//function előre() {
+//    clearTimeout(timeoutHandler)
+//    displayedQuestion++;
+//    if (displayedQuestion == questionsInHotList) displayedQuestion = 0;
+//    kérdésMegjelenítés()
+//}
 
