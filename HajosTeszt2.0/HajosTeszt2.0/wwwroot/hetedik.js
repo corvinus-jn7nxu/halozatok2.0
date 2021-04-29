@@ -172,12 +172,12 @@ function szinez(megoldas) {
     }
 
 }
-//var timeoutHandler;
-//timeoutHandler = setTimeout(előre, 3000);
-//function előre() {
-//    clearTimeout(timeoutHandler)
-//    displayedQuestion++;
-//    if (displayedQuestion == questionsInHotList) displayedQuestion = 0;
-//    kérdésMegjelenítés()
-//}
+var timeoutHandler;
+timeoutHandler = setTimeout(előre, 3000);
+function előre() {
+    clearTimeout(timeoutHandler)
+    displayedQuestion++;
+    if (displayedQuestion == questionsInHotList) displayedQuestion = 0;
+    kérdésMegjelenítés()
+}
 
