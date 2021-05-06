@@ -1,21 +1,4 @@
-﻿window.onload = function () {
-    init()
-    let válasz1 = document.getElementById("válasz1")
-    let válasz2 = document.getElementById("válasz2")
-    let válasz3 = document.getElementById("válasz3")
-
-    //fetch('/questions/' + aktiv_kérdés)
-    //    .then(response => {
-
-    //        if (!response.ok) return
-
-    //        return response.json()
-
-
-    //    })
-    //    .then(data => kérdésMegjelenítés(data)
-    //    );
-}
+﻿window.onload = function() { init(); }
 
 var kérdések
 var aktiv_kérdés = 1
@@ -25,6 +8,7 @@ var questionsInHotList = 3; //Ez majd 7 lesz, teszteléshez jobb a 3.
 var displayedQuestion;      //A hotList-ből éppen ez a kérdés van kint
 var numberOfQuestions;      //Kérdések száma a teljes adatbázisban
 var nextQuestion = 1;       //A következő kérdés száma a teljes listában
+var timerHandler;
 
 function kérdésMegjelenítés() {
     let kérdés = hotList[displayedQuestion].question;
@@ -33,11 +17,16 @@ function kérdésMegjelenítés() {
     document.getElementById("válasz1").innerText = kérdés.answer1
     document.getElementById("válasz2").innerText = kérdés.answer2
     document.getElementById("válasz3").innerText = kérdés.answer3
-    if (kérdés.image == "") { }
-    else {
+    //document.getElementById("kép1").src = "https://szoft1.comeback.hu/hajo/" + kérdés.image;
+    if (kérdés.image) {
         document.getElementById("kép1").src = "https://szoft1.comeback.hu/hajo/" + kérdés.image;
+        //document.getElementById("kép").style.display = "block";
+    }
+    else {
+        document.getElementById("kép1").style.display = "none";
     }
     helyes_válasz = kérdés.correctAnswer
+    document.getElementById("col-3 válaszok").style.pointerEvents = "auto";
 }
 
 
@@ -92,47 +81,28 @@ function letöltésBefejeződött(d) {
 }
 
 function előre() {
-    vissza_szinez()
+    clearTimeout(timerHandler);
+    document.getElementById("col-3 válaszok").style.pointerEvents = "auto";
+    vissza_szinez();
     if (hotList[displayedQuestion].goodAnswers == 3) {
         displayedQuestion++;
-        if (displayedQuestion == hotList.Count) {
-            return;
+        kérdésMegjelenítés();
+
+        kérdésBetöltés(nextQuestion, displayedQuestion);
+        nextQuestion++;
         }
-        //if (displayedQuestion == questionsInHotList) displayedQuestion = 0;
-        else {
-            kérdésMegjelenítés()
-        }
-
-    }
-
-
-
+    
 }
-
-function előre_katt() {
-    vissza_szinez()
-    if (aktiv_kérdés == 820) {
-        aktiv_kérdés = 1
-        kérdésBetöltés(aktiv_kérdés)
+function vissza() {
+    clearTimeout(timeoutHandler);
+    displayedQuestion--;
+    if (displayedQuestion == -1) {
+        displayedQuestion = questionsInHotList - 1;
     }
-    else {
-        aktiv_kérdés = aktiv_kérdés + 1
-        kérdésBetöltés(aktiv_kérdés)
-    }
-}
-
-
-
-function vissza_katt() {
-    vissza_szinez()
-    if (aktiv_kérdés == 1) {
-        aktiv_kérdés = 820
-        kérdésBetöltés(aktiv_kérdés)
-    }
-    else {
-        aktiv_kérdés = aktiv_kérdés - 1
-        kérdésBetöltés(aktiv_kérdés)
-    }
+    kerdesMegjelenites();
+    torles();
+    document.getElementById("col-3 válaszok").style.pointerEvents = "auto";
+    
 }
 
 function vissza_szinez() {
@@ -146,6 +116,7 @@ function szinez(megoldas) {
     //let válasz2 = document.getElementById("válasz2")
     //let válasz3 = document.getElementById("válasz3")
 
+    document.getElementById("col-3 válaszok").style.pointerEvents = "none";
 
     if (helyes_válasz == "1") {
         console.log("első a jó")
@@ -171,13 +142,13 @@ function szinez(megoldas) {
         hotList[displayedQuestion].goodAnswers++;
     }
 
+    
+
+    timerHandler = setTimeout(előre, 3000);
+
+    localStorage.setItem("hotList", JSON.stringify(hotList));
+    localStorage.setItem("DisplayedQuestion", displayedQuestion);
+    localStorage.setItem("nextQuestion", nextQuestion);
 }
-var timeoutHandler;
-timeoutHandler = setTimeout(előre, 3000);
-function előre() {
-    clearTimeout(timeoutHandler)
-    displayedQuestion++;
-    if (displayedQuestion == questionsInHotList) displayedQuestion = 0;
-    kérdésMegjelenítés()
-}
+
 
